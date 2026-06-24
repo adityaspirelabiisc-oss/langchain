@@ -1,1 +1,28 @@
+name: Build RAG Docker Image
 
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: 
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Build the Docker Image
+        # We'll tag it 'rag-app' for easy reference
+        run: docker build -t rag-app:latest .
+
+      - name: Save Image as a Tar File
+        run: docker save -o rag-app.tar rag-app:latest
+
+      - name: Upload Artifact for Download
+        uses: actions/upload-artifact@v4
+        with:
+          name: rag-docker-image
+          path: rag-app.tar
+          retention-days: 1
